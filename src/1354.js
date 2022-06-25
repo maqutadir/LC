@@ -1,63 +1,62 @@
-class maxHeap {
-  constructor () {
-    this.heap = []
-    this.len = 0
-  }
-  
-
-  getHeap () {
-    return this.heap
+class MaxHeap {
+  constructor() {
+    this.heap = [];
+    this.len = 0;
   }
 
-  getLeftChildIndex (index) {
-    return (2 * index) + 1
+  getHeap() {
+    return this.heap;
   }
 
-  getRightChildIndex (index) {
-    return 2 * index + 2
+  getLeftChildIndex(index) {
+    return 2 * index + 1;
   }
 
-  getParentIndex (index) {
-    return Math.floor((index-1)/2))
+  getRightChildIndex(index) {
+    return 2 * index + 2;
   }
 
-  hasLeftChild (index) {
-    return this.getLeftChildIndex < this.len
+  getParentIndex(index) {
+    return Math.floor((index - 1) / 2);
   }
 
-  hasRightChild (index) {
-    return this.getRightChildIndex < this.len
+  hasLeftChild(index) {
+    return this.getLeftChildIndex(index) < this.len;
   }
 
-  hasParent (index) {
-    return this.getParentIndex > -1
+  hasRightChild(index) {
+    return this.getRightChildIndex(index) < this.len;
   }
 
-  leftChild (index) {
-    return this.heap[this.getLeftChildIndex[index]]
+  hasParent(index) {
+    return this.getParentIndex(index) > -1;
   }
 
-  rightChild (index) {
-    return this.heap[this.getRightChildIndex[index]]
+  leftChild(index) {
+    return this.heap[this.getLeftChildIndex(index)][0];
   }
 
-  parent (index) {
-    return this.heap[this.getParentIndex[index]]
+  rightChild(index) {
+    return this.heap[this.getRightChildIndex(index)][0];
   }
 
-  removemax () {
-    if (this.len === 0) throw new Error('Empty heap')
-    let max = this.heap[0]
-    this.heap[0] = this.heap[this.len-1]
-    this.len--
-    this.heapifyDown(0)
-    return max
+  parent(index) {
+    return this.heap[this.getParentIndex(index)][0];
   }
 
-  add (data) {
-    this.heap[this.len] = data
-    this.len++
-    this.heapifyUp(this.len-1)
+  removemax() {
+    if (this.len === 0) throw new Error("Empty heap");
+    let max = this.heap[0];
+    this.heap[0] = this.heap[this.len - 1];
+    this.len--;
+    this.heapifyDown(0);
+    return max;
+  }
+
+  add(data) {
+    this.heap[this.len] = data;
+    this.len++;
+    this.heapifyUp(this.len - 1);
   }
 
   swap(index1, index2) {
@@ -67,39 +66,55 @@ class maxHeap {
     ];
   }
 
-  heapifyDown (index) {
-    let largest = index
-    if (this.hasLeftChild && this.heap[largest] < this.leftChild[index]) largest = this.leftChild[index]
-    if (this.hasRightChild && this.heap[largest] < this.rightChild[index]) largest = this.rightChild[index]
+  heapifyDown(index) {
+    let largest = index;
+    if (
+      this.hasLeftChild(index) &&
+      this.heap[largest][0] < this.leftChild(index)
+    )
+      largest = this.getLeftChildIndex(index);
+    if (
+      this.hasRightChild(index) &&
+      this.heap[largest][0] < this.rightChild(index)
+    )
+      largest = this.getRightChildIndex(index);
     if (largest != index) {
-       this.swap(index, largest)
-       this.heapifyDown(largest)
+      this.swap(index, largest);
+      this.heapifyDown(largest);
     }
-}
+  }
 
-heapifyUp (index) {
-  if (this.hasParent(index) && this.parent[index] > this.heap[index]){
-    this.swap(index, this.getParentIndex(index))
-    this.heapifyUp(this.getParentIndex(index))
+  heapifyUp(index) {
+    if (this.hasParent(index) && this.parent(index) < this.heap[index][0]) {
+      this.swap(index, this.getParentIndex(index));
+      this.heapifyUp(this.getParentIndex(index));
+    }
   }
 }
 
+let arr = [3, 4];
+let maxHeap = new MaxHeap();
+
+for (let i = 0; i < arr.length; i++) {
+  maxHeap.add([arr[i], i]);
 }
 
-let maxHeap = new MaxHeap(target)
+function isPossible(target) {
+  if (JSON.stringify(target) === JSON.stringify(Array(target.length).fill(1)))
+    return true;
+  let max = maxHeap.removemax();
 
-function isPossible (target) {
-  if (target === Array(target.length).fill(1)) return true
-  let max = maxHeap.removemax()
+  const [value, index] = max;
 
-  const [value, index] = max
-  maxHeap.add([value, index])
-
-  let arrSum = 0
-  for (let i=0; i<target.length; i++) {
-    if (i != index) arrSum += target[i]
+  let arrSum = 0;
+  for (let i = 0; i < target.length; i++) {
+    if (i !== index) arrSum += target[i];
   }
-  target[index] -= arrSum
-  if(target[index] < 1) return false
-  return isPossible(target)
+  if (arrSum === 1) return true;
+  target[index] = target[index] > arrSum ? target[index] % arrSum : 0;
+  if (target[index] < 1) return false;
+  maxHeap.add([target[index], index]);
+  return isPossible(target);
 }
+
+console.log("Array is possible", isPossible(arr));
