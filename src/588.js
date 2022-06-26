@@ -15,6 +15,7 @@ function fsTrie(path, type, content = "", op = "add") {
     }
   }
   if (op === "list") {
+    if (path === "/") node = root;
     return Object.keys(node);
   }
 
@@ -24,8 +25,8 @@ function fsTrie(path, type, content = "", op = "add") {
 
   if (op === "write") {
     if (!node.content) {
-      node.content = [];
-    } else node.content.push(content);
+      node.content = content;
+    } else node.content += " " + content;
   }
 
   return root;
@@ -33,7 +34,6 @@ function fsTrie(path, type, content = "", op = "add") {
 
 console.log(
   "Built Trie is",
-  fsTrie("/", "root"),
   fsTrie("/a/b/c/d/e", "file"),
   fsTrie("/a/b/e", "dir"),
   fsTrie("/a/b/c", "file"),
@@ -81,7 +81,13 @@ fileSystem.addContentToFile("/a/b/c/d/e", "Hello");
 fileSystem.addContentToFile("/a/b/c/d/e", "World");
 fileSystem.addContentToFile("/a/b/c/d/e", "There");
 console.log("Data is", fileSystem.readContentFromFile("/a/b/c/d/e"));
-console.log("All contents are", fileSystem.ls("/a/b"));
+console.log("All contents are", fileSystem.ls("/"));
+fileSystem.mkdir("/hello/there/i/come");
+fileSystem.addContentToFile("/that/is/the/best", "told you that is the best");
+console.log(
+  "Data from file is",
+  fileSystem.readContentFromFile("/that/is/the/best")
+);
 
 /**
  * @param {string} filePath
